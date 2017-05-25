@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" media="screen" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <title>Sample Shopping Cart</title>
+    <!--  -->
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            background-color: #E5E5E5;
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        .foot {
+            position: relative;
+            margin-top: 20px;
+            background-color: #242F40;
+        }
+        
+        #title {
+            padding: 20px;
+            color: #E5E5E5;
+        }
+        
+        p {
+            color: #363636;
+        }
+        
+        h2 {
+            color: #242F40;
+        }
+        
+        .btn {
+            background-color: #3C91E6;
+            color: #E5E5E5;
+        }
+        
+        .images {
+            background: url(./img/productImage.png) no-repeat center center;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+        
+        .proImg {
+            /*            background-color: #FFFFFF;*/
+            height: 175px;
+            width: 300px;
+            position: relative;
+            border: 1px solid #242F40;
+        }
+     
+        .section {
+            position: relative;
+            margin: 20px;
+        }
+        
+        .cartCount {
+            color: red;
+            display: inline-block;
+        }
+        
+        ul li {
+            list-style: none;
+        }
+        
+        .header {
+            background-color: #242F40;
+            height: 50px;
+            color: white;
+        }
+        
+        .header p {
+            color: white;
+            padding: 15px;
+        }
+        
+        .row-center {
+            text-align: center;
+        }
+        
+        .col-center {
+            display: inline-block;
+            float: none;
+            text-align: left;
+            margin-right: -4px;
+        }
+        
+        hr {
+            border-top: 1px solid #242F40;
+            text-align: center;
+            width: 10%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <p style="text-align: center">Sample shopping cart built using vanilla JavaScript.</p>
+    </div>
+        
+    <div class="col-md-12 section">
+        <div>
+            <p style="display: inline-block">items in cart:</p>
+            <h3 class="cartCount" id='count'>0</h3> </div>
+        <button type="button" class="btn btn-info" onclick="showItem()" data-toggle="modal" data-target="#myModal">See Cart</button>
+        <h1 style="text-align: center">BACKPACKS</h1>
+        <hr>
+        
+<!--  Start Dynamic Injection      -->
+        <div class="row row-center">';
+            <div id='show'></div>
+        </div>
+<!--  End Dynamic Injection      -->
+        
+<!--  Start Modal      -->
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Shopping Cart</h4> </div>
+                    <div class="modal-body">
+                        <p>Current Items In Cart:</p>
+                        <div id='cartItems'></div>
+                        <button onclick="empty()">Empty Cart</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    
+    
+    <script>
+        
+  
+        var count = 0;
+        var cart = [];
+        var tempArray = [];
+        var newCart = [];
+        var objOfMatches = {};
+        var arr = [];
+        
+        //array of objects for all products
+        var products = [
+            {
+                name: 'Yosemite basic',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 40.99
+        },
+
+            {
+                name: 'Rocky Mountain pro',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 20.99
+        },
+             {
+                name: 'Grand Canyon elite',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 35.99
+        },
+             {
+                name: 'Moab 50L',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 38.99
+        },
+             {
+                name: 'Arcadia 70L',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 50.99
+        },
+             {
+                name: 'Everglades lite',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 32.99
+        },
+             {
+                name: 'Red Wood the big one',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 67.99
+        },
+
+            {
+                name: 'Sand dunes lite',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 75.99
+        },
+             {
+                name: 'Muir pro',
+                description: 'best pack on the planet',
+                other: '',
+                qty: 1,
+                price: 105.99
+        }
+
+        ];
+        buildProView();
+
+        function buildProView() {
+            var text = '';
+            for (var i = 0; i < products.length; i++) {
+                text += '<div class = "col-md-4 col-md-4-offset-2 col-center">';
+                text += '<h2>' + products[i].name + '</h2>';
+                text += '<div class = "proImg images"></div>';
+                text += '<p>' + products[i].other + '</p>';
+                text += '<p>Price: ' + products[i].price + '</p>';
+                var prod = products[i].name;
+                var qty = products[i].qty;
+                var description = products[i].description;
+                var price = products[i].price;
+                text += '<button class = "btn" id="addButton' + i + '" onclick="addItems(\'' + prod + '\')">Add</button>';
+                text += '</div>';
+                //                text += '</div>';
+                //ES6 Example    
+                //        text = `
+                //            <button class = "btn" id="addButton${i}" onclick="addItems(${name}, ${qty})">Add</button>
+                //            </div>        
+                //            </div>
+                //        `
+            }
+            //console.log(prod)
+            document.getElementById('show').innerHTML = text;
+        }
+
+        function addItems(prod) {
+            cart.push(prod);
+            //console.log(cart);
+            document.getElementById('count').innerHTML = cart.length;
+        }
+
+        function showItem() {
+            //need to clear cart to prevent from showing previous count on modal open
+            newCart = [];
+            countDup()
+        }
+
+        function empty() {
+            //reset all variables
+            newCart = [];
+            count = 0;
+            cart = [];
+            arr = [];
+            tempArray = [];
+            newCart = [];
+            objOfMatches = {};
+            //console.log(cart)
+            document.getElementById('count').innerHTML = 0;
+            document.getElementById('cartItems').innerHTML = '';
+        }
+
+        function countDup() {
+            arr = [];
+            for (let i = 0; i < cart.length; i++) { 
+                let can = cart[i];
+                arr.push(can);
+            }
+            //console.log(arr);
+            var objOfMatches = {};
+            for (var i = 0, j = arr.length; i < j; i++) {
+                objOfMatches[arr[i]] = (objOfMatches[arr[i]] || 0) + 1;
+            }
+            //flattens object number of occurance into an array so I can loop through and find maximum number of repeating valus
+            var out = Object.keys(objOfMatches).map(function (data) {
+                newCart.push([data, objOfMatches[data]]);
+                //console.log(newCart);
+            });
+            cartItems = '';
+            cartItems += '<ul>';
+            for (var i = 0; i < newCart.length; i++) {
+                cartItems += '<li>' + newCart[i][0] + ' (' + newCart[i][1] + ')</li>';
+            }
+            cartItems += '</ul>';
+            document.getElementById('cartItems').innerHTML = cartItems;
+            //console.log(objOfMatches);
+        }
+           console.log("Thanks for checking out my shopping cart!") 
+        
+    </script>
+</body>
+
+</html>
