@@ -98,6 +98,22 @@
             text-align: center;
             width: 10%;
         }
+        
+        .successful {
+          
+            display: none;
+            color: #00CC00;
+            font-size: 20px; 
+            font-weight: 800; 
+            text-align: center; 
+            position: fixed; 
+              width: 300px;
+            left: 40%;
+            top: 200px; 
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            z-index: 99
+        }
     </style>
 </head>
 
@@ -105,18 +121,27 @@
     <div class="header">
         <p style="text-align: center">Sample shopping cart built using vanilla JavaScript.</p>
     </div>
-        
+      
+    <div>
+    
+     <div id="success" class="successful" style="">SUCCESSFULLY ADDED TO CART</div>
+
+    
+    </div>
+    
     <div class="col-md-12 section">
         <div>
             <p style="display: inline-block">items in cart:</p>
-            <h3 class="cartCount" id='count'>0</h3> </div>
+            <h3 class="cartCount" id='count'>0</h3> 
+
+        </div>
         <button type="button" class="btn btn-info" onclick="showItem()" data-toggle="modal" data-target="#myModal">See Cart</button>
         <h1 style="text-align: center">BACKPACKS</h1>
+      
         <hr>
-        
 <!--  Start Dynamic Injection      -->
-        <div class="row row-center">';
-            <div id='show'></div>
+        <div class="row row-center">
+            <div id="show"></div>
         </div>
 <!--  End Dynamic Injection      -->
         
@@ -223,22 +248,24 @@
         }
 
         ];
+        
+        
         buildProView();
 
         function buildProView() {
-            var text = '';
+            var shop = '';
             for (var i = 0; i < products.length; i++) {
-                text += '<div class = "col-md-4 col-md-4-offset-2 col-center">';
-                text += '<h2>' + products[i].name + '</h2>';
-                text += '<div class = "proImg images"></div>';
-                text += '<p>' + products[i].other + '</p>';
-                text += '<p>Price: ' + products[i].price + '</p>';
+                shop += '<div class = "col-md-4 col-md-4-offset-2 col-center">';
+                shop += '<h2>' + products[i].name + '</h2>';
+                shop += '<div class = "proImg images"></div>';
+                shop += '<p>' + products[i].other + '</p>';
+                shop += '<p>Price: ' + products[i].price + '</p>';
                 var prod = products[i].name;
                 var qty = products[i].qty;
                 var description = products[i].description;
                 var price = products[i].price;
-                text += '<button class = "btn" id="addButton' + i + '" onclick="addItems(\'' + prod + '\')">Add</button>';
-                text += '</div>';
+                shop += '<button class = "btn" id="addButton' + i + '" onclick="addItems(\'' + prod + '\')">Add</button>';
+                shop += '</div>';
                 //                text += '</div>';
                 //ES6 Example    
                 //        text = `
@@ -247,18 +274,21 @@
                 //            </div>
                 //        `
             }
-            //console.log(prod)
-            document.getElementById('show').innerHTML = text;
+          
+            document.getElementById('show').innerHTML = shop;
         }
 
         function addItems(prod) {
+
             cart.push(prod);
-            //console.log(cart);
             document.getElementById('count').innerHTML = cart.length;
+            
+            $("#success").show();
+setTimeout(function() { $("#success").hide(); }, 2000);
+
         }
 
         function showItem() {
-            //need to clear cart to prevent from showing previous count on modal open
             newCart = [];
             countDup()
         }
@@ -272,7 +302,6 @@
             tempArray = [];
             newCart = [];
             objOfMatches = {};
-            //console.log(cart)
             document.getElementById('count').innerHTML = 0;
             document.getElementById('cartItems').innerHTML = '';
         }
@@ -283,7 +312,6 @@
                 let can = cart[i];
                 arr.push(can);
             }
-            //console.log(arr);
             var objOfMatches = {};
             for (var i = 0, j = arr.length; i < j; i++) {
                 objOfMatches[arr[i]] = (objOfMatches[arr[i]] || 0) + 1;
@@ -291,7 +319,6 @@
             //flattens object number of occurance into an array so I can loop through and find maximum number of repeating valus
             var out = Object.keys(objOfMatches).map(function (data) {
                 newCart.push([data, objOfMatches[data]]);
-                //console.log(newCart);
             });
             cartItems = '';
             cartItems += '<ul>';
@@ -300,7 +327,6 @@
             }
             cartItems += '</ul>';
             document.getElementById('cartItems').innerHTML = cartItems;
-            //console.log(objOfMatches);
         }
            console.log("Thanks for checking out my shopping cart!") 
         
